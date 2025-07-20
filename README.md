@@ -1,11 +1,32 @@
 # Design-and-Simulation-of-8-8-Synchronous-RAM
 
+module ram_8x8 (
+    input clk,
+    input reset,
+    input [2:0] address,
+    input [7:0] data_in,
+    input write_enable,
+    input read_enable,
+    output reg [7:0] data_out
+);
 
-This project implements and simulates an 8×8 Synchronous Random Access Memory (RAM) using Verilog HDL.
-The memory has 8 locations (addresses), each capable of storing 8‑bit data. All operations (read and write) are synchronized with the clock.
+    reg [7:0] memory [7:0];
+    integer i;
 
-✨ Features
-8 memory locations (3‑bit address).
-8‑bit data input and output.
-Synchronous write and read on the positive clock edge.
-Testbench provided for functional simulation.
+    // Synchronous reset and write
+    always @(posedge clk or posedge reset) begin
+        if (reset) begin
+            for (i = 0; i < 8; i = i + 1)
+                memory[i] <= 8'd0;
+        end else if (write_enable) begin
+            memory[address] <= data_in;
+        end
+    end
+
+    // Synchronous read
+    always @(posedge clk) begin
+        if (read_enable)
+            data_out <= memory[address];
+    end
+
+endmodule
